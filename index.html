@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galerie de produits</title>
+
+  <style>
+    /* =========================
+       VARIABLES
+    ========================== */
+
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #6b7280;
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --border: rgba(0, 0, 0, 0.08);
+      --shadow: 0 15px 40px rgba(15, 23, 42, 0.08);
+    }
+
+    body.dark {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --primary: #818cf8;
+      --primary-dark: #6366f1;
+      --border: rgba(255, 255, 255, 0.08);
+      --shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    /* =========================
+       RESET
+    ========================== */
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition:
+        background-color 0.5s ease,
+        color 0.5s ease;
+    }
+
+    /* =========================
+       HEADER
+    ========================== */
+
+    header {
+      width: 100%;
+      padding: 24px 7%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .theme-toggle {
+      width: 52px;
+      height: 28px;
+      border: none;
+      border-radius: 50px;
+      background: var(--primary);
+      cursor: pointer;
+      position: relative;
+      transition: background 0.3s ease;
+    }
+
+    .theme-toggle::before {
+      content: "☀";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      left: 3px;
+      top: 3px;
+      border-radius: 50%;
+      background: white;
+      color: #f59e0b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      transition: transform 0.35s ease;
+    }
+
+    body.dark .theme-toggle::before {
+      content: "☾";
+      transform: translateX(24px);
+      color: #6366f1;
+    }
+
+    /* =========================
+       HERO
+    ========================== */
+
+    .hero {
+      text-align: center;
+      padding: 80px 20px 50px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      line-height: 1.1;
+      margin-bottom: 18px;
+      letter-spacing: -2px;
+    }
+
+    .hero h1 span {
+      color: var(--primary);
+    }
+
+    .hero p {
+      max-width: 600px;
+      margin: auto;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    /* =========================
+       PRODUCTS
+    ========================== */
+
+    .products {
+      width: min(1100px, 90%);
+      margin: 20px auto 80px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .product-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+
+      /* Animation initiale */
+      opacity: 0;
+      transform: translateY(35px);
+
+      transition:
+        transform 0.45s ease,
+        box-shadow 0.45s ease,
+        background-color 0.5s ease,
+        opacity 0.7s ease;
+    }
+
+    .product-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .product-card:nth-child(1) {
+      transition-delay: 0.1s;
+    }
+
+    .product-card:nth-child(2) {
+      transition-delay: 0.25s;
+    }
+
+    .product-card:nth-child(3) {
+      transition-delay: 0.4s;
+    }
+
+    .product-card:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 25px 55px rgba(99, 102, 241, 0.18);
+    }
+
+    .product-image {
+      height: 230px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 90px;
+      background: linear-gradient(
+        135deg,
+        rgba(99, 102, 241, 0.14),
+        rgba(139, 92, 246, 0.04)
+      );
+      transition: transform 0.5s ease;
+    }
+
+    .product-card:hover .product-image {
+      transform: scale(1.04);
+    }
+
+    .product-info {
+      padding: 25px;
+    }
+
+    .category {
+      color: var(--primary);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .product-info h2 {
+      margin: 8px 0 10px;
+      font-size: 1.4rem;
+    }
+
+    .product-info p {
+      color: var(--muted);
+      line-height: 1.6;
+      min-height: 52px;
+    }
+
+    .product-bottom {
+      margin-top: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .price {
+      font-size: 1.35rem;
+      font-weight: 800;
+    }
+
+    .buy-btn {
+      border: none;
+      background: var(--primary);
+      color: white;
+      padding: 11px 17px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      transition:
+        background 0.25s ease,
+        transform 0.25s ease;
+    }
+
+    .buy-btn:hover {
+      background: var(--primary-dark);
+      transform: scale(1.05);
+    }
+
+    .buy-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* =========================
+       FOOTER
+    ========================== */
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 30px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media (max-width: 850px) {
+      .products {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 20px;
+      }
+
+      .hero {
+        padding-top: 55px;
+      }
+
+      .products {
+        grid-template-columns: 1fr;
+        width: 88%;
+      }
+
+      .product-image {
+        height: 210px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">NovaShop</div>
+
+    <button
+      class="theme-toggle"
+      id="themeToggle"
+      aria-label="Changer de thème"
+      title="Changer de thème">
+    </button>
+  </header>
+
+  <main>
+
+    <section class="hero">
+      <h1>Découvrez nos <span>produits</span></h1>
+
+      <p>
+        Une sélection moderne pensée pour améliorer votre quotidien,
+        avec un design simple, élégant et performant.
+      </p>
+    </section>
+
+    <section class="products">
+
+      <!-- Produit 1 -->
+      <article class="product-card">
+        <div class="product-image">🎧</div>
+
+        <div class="product-info">
+          <span class="category">Audio</span>
+
+          <h2>Casque AirSound</h2>
+
+          <p>
+            Un casque sans fil confortable avec une excellente
+            qualité audio et une autonomie prolongée.
+          </p>
+
+          <div class="product-bottom">
+            <span class="price">129 €</span>
+            <button class="buy-btn">Acheter</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Produit 2 -->
+      <article class="product-card">
+        <div class="product-image">⌚</div>
+
+        <div class="product-info">
+          <span class="category">Tech</span>
+
+          <h2>SmartWatch Pro</h2>
+
+          <p>
+            Une montre intelligente élégante pour suivre votre
+            activité et rester connecté toute la journée.
+          </p>
+
+          <div class="product-bottom">
+            <span class="price">199 €</span>
+            <button class="buy-btn">Acheter</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Produit 3 -->
+      <article class="product-card">
+        <div class="product-image">📷</div>
+
+        <div class="product-info">
+          <span class="category">Photo</span>
+
+          <h2>Caméra Vision X</h2>
+
+          <p>
+            Capturez vos meilleurs moments avec une caméra
+            compacte, rapide et facile à utiliser.
+          </p>
+
+          <div class="product-bottom">
+            <span class="price">349 €</span>
+            <button class="buy-btn">Acheter</button>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+  </main>
+
+  <footer>
+    © 2026 NovaShop — Galerie de produits
+  </footer>
+
+  <script>
+    // =========================
+    // BASCULE DU THÈME
+    // =========================
+
+    const themeToggle = document.getElementById("themeToggle");
+
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+
+      // Mémorise le thème choisi
+      const isDark = document.body.classList.contains("dark");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+    });
+
+    // Restaure le thème précédent
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme === "dark") {
+      document.body.classList.add("dark");
+    }
+
+    // =========================
+    // ANIMATION DES CARTES
+    // =========================
+
+    const cards = document.querySelectorAll(".product-card");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        });
+      },
+      {
+        threshold: 0.15
+      }
+    );
+
+    cards.forEach((card) => {
+      observer.observe(card);
+    });
+
+    // =========================
+    // BOUTONS ACHETER
+    // =========================
+
+    const buttons = document.querySelectorAll(".buy-btn");
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const originalText = button.textContent;
+
+        button.textContent = "Ajouté ✓";
+
+        setTimeout(() => {
+          button.textContent = originalText;
+        }, 1200);
+      });
+    });
+  </script>
+
+</body>
+</html>
